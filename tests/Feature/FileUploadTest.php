@@ -59,10 +59,19 @@ class FileUploadTest extends TestCase
         $this->assertEquals(200, $data->code);
     }
 
-    public function testDeleteImageMustNotSuccess()
+    public function testDeleteImageMustNotSuccessInvalidImageId()
     {
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->call('DELETE', 'api/galleries/200');
+        $data = $this->parseJson($response);
+        $this->assertEquals(400, $data->code);
+        $this->assertEquals('invalid image id', $data->message[0]);
+    }
+
+    public function testDeleteImageMustNotSuccessImageNotFound()
+    {
+        $user = factory(User::class)->create();
+        $response = $this->actingAs($user)->call('DELETE', 'api/galleries/'.resolve('Support\Hash')->encode(100));
         $data = $this->parseJson($response);
         $this->assertEquals(400, $data->code);
         $this->assertEquals('image not found', $data->message[0]);
