@@ -4,6 +4,7 @@ namespace App\Container\Gallery\Controllers\Api;
 
 use App\Container\Gallery\Models\Gallery;
 use App\Container\Gallery\Services\UploadService;
+use App\Container\Gallery\Transformers\GalleryTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class ApiGalleryController extends Controller
     public function index()
     {
         $galleries = Gallery::where('user_id', Auth::user()->id)->get();
-        return $this->respond([], 200, $galleries);
+        return $this->respond([], 200, GalleryTransformer::transform($galleries));
     }
 
     public function store(Request $request)
@@ -33,20 +34,26 @@ class ApiGalleryController extends Controller
         $validator = Validator::make($request->only('file'), $rules);
         if (!$validator->passes()) return $this->respond($validator->errors()->all(), 400, []);
         $image = $this->uploadService->uploadImage(Auth::user(), $request->file);
-        return $this->respond([], 200, [$image]);
+        return $this->respond([], 200, [GalleryTransformer::transform($image)]);
     }
 
     public function delete($id)
     {
         $rules = [
-            'id' => 'required|integer'
+            'id' => 'required'
         ];
         $validator = Validator::make(['id' => $id], $rules);
         if (!$validator->passes()) return $this->respond($validator->errors()->all(), 400, []);
-        if ($this->uploadService->removeImage(Auth::user(), $id)) {
-            return $this->respond([], 200, []);
+        try {
+            $decodedImageId = resolve('Support\Hash')->decode($id)[0];
+            if ($this->uploadService->removeImage(Auth::user(), $decodedImageId)) {
+                return $this->respond([], 200, []);
+            }
+        } catch (\Exception $e) {
+            return $this->respond([config('error_message.invalid_image_id.en')], 400, []);
         }
-        return $this->respond([config('error_message.image_not_found.th')], 400, []);
+
+        return $this->respond([config('error_message.image_not_found.en')], 400, []);
     }
 
 }
