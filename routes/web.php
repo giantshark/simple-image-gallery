@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('home');
+    return redirect()->route('home.disk.index');
 });
 
 Route::group(['middleware' => 'auth'], function() {
