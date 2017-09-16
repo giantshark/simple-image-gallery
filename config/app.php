@@ -167,7 +167,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        Themsaid\Transformers\TransformersServiceProvider::class,
         /*
          * Application Service Providers...
          */
