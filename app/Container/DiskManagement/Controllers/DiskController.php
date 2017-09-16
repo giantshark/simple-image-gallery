@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 class DiskController extends Controller
 {
 
-    private $disk;
+    protected $disk;
 
     public function __construct(Disk $disk)
     {
