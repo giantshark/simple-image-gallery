@@ -21,7 +21,7 @@ class ApiGalleryController extends Controller
 
     public function index()
     {
-        $galleries = Gallery::get();
+        $galleries = Gallery::where('user_id', Auth::user()->id)->get();
         return $this->respond([], 200, $galleries);
     }
 
