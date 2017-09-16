@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Container\Authentication\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class FileUploadTest extends TestCase
 {
@@ -14,6 +15,7 @@ class FileUploadTest extends TestCase
 
     public function testMustListIamges()
     {
+        Storage::fake('public');
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->call('GET', 'api/galleries');
         $data = $this->parseJson($response);
@@ -22,6 +24,7 @@ class FileUploadTest extends TestCase
 
     public function testUploadImageMustSuccess()
     {
+        Storage::fake('public');
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->call('POST', 'api/galleries', [
             'file' => UploadedFile::fake()->image('avatar.jpg')
@@ -33,6 +36,7 @@ class FileUploadTest extends TestCase
 
     public function testUploadImageMustNotSuccess()
     {
+        Storage::fake('public');
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->call('POST', 'api/galleries', [
             'file' => UploadedFile::fake()->image('avatar.svg')
@@ -44,6 +48,7 @@ class FileUploadTest extends TestCase
 
     public function testDeleteImageMustSuccess()
     {
+        Storage::fake('public');
         $user = factory(User::class)->create();
         $uploadResponse = $this->actingAs($user)->call('POST', 'api/galleries', [
             'file' => UploadedFile::fake()->image('avatar.png')

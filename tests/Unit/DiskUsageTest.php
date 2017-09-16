@@ -8,6 +8,7 @@ use Tests\TestCase;
 use App\Container\Authentication\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class DiskUsageTest extends TestCase
 {
@@ -16,6 +17,7 @@ class DiskUsageTest extends TestCase
 
     public function testDiskUsageMustIncreaseByImageSize()
     {
+        Storage::fake('public');
         $user = factory(User::class)->create();
         $uploadResponse = $this->actingAs($user)->call('POST', 'api/galleries', [
             'file' => UploadedFile::fake()->image('avatar.png')
@@ -28,6 +30,7 @@ class DiskUsageTest extends TestCase
 
     public function testTotalDiskUsageMustCorrect()
     {
+        Storage::fake('public');
         $totalSize = 0;
         for ($i = 0; $i < 4; $i++) {
             $user = factory(User::class)->create();
