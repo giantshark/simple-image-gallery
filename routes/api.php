@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['middleware' => 'auth'], function() {
+Route::group(['middleware' => 'api.auth'], function() {
     Route::group(['namespace' => 'Gallery\Controllers\Api','prefix' => 'galleries', 'as' => 'gallery.'], function() {
         Route::get('/', ['as' => 'index', 'uses' => 'ApiGalleryController@index']);
         Route::delete('/{id}', ['as' => 'delete', 'uses' => 'ApiGalleryController@delete']);
