@@ -32,9 +32,9 @@ class UploadService {
         ];
     }
 
-    public function removeImage($imageId)
+    public function removeImage($user, $imageId)
     {
-        $image = Gallery::find($imageId);
+        $image = Gallery::where('id', $imageId)->where('user_id', $user->id)->first();
         if ($image && $image->delete()) {
             return true;
         }
