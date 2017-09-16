@@ -16,13 +16,7 @@ class ApiGalleryController extends Controller
 
     public function __construct(UploadService $uploadService)
     {
-
         $this->uploadService = $uploadService;
-    }
-
-    public function home()
-    {
-        return view('gallery.index');
     }
 
     public function index()
@@ -47,15 +41,12 @@ class ApiGalleryController extends Controller
         $rules = [
             'id' => 'required|integer'
         ];
-
         $validator = Validator::make(['id' => $id], $rules);
-
         if (!$validator->passes()) return $this->respond($validator->errors()->all(), 400, []);
-
         if ($this->uploadService->removeImage($id)) {
             return $this->respond([], 200, []);
         }
-        return $this->respond(['image not found'], 400, []);
+        return $this->respond([config('error_message.image_not_found.th')], 400, []);
     }
 
 }
