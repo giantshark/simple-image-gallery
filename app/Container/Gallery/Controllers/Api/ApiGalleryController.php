@@ -43,7 +43,7 @@ class ApiGalleryController extends Controller
         ];
         $validator = Validator::make(['id' => $id], $rules);
         if (!$validator->passes()) return $this->respond($validator->errors()->all(), 400, []);
-        if ($this->uploadService->removeImage($id)) {
+        if ($this->uploadService->removeImage(Auth::user(), $id)) {
             return $this->respond([], 200, []);
         }
         return $this->respond([config('error_message.image_not_found.th')], 400, []);
